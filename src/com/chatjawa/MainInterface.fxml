@@ -1,0 +1,416 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<!--
+  ~ ChatJawa is a Star Wars: The Old Republic tool for managing chat settings
+  ~ across multiple characters.
+  ~
+  ~ Copyright (C) 2015 ChatJawa
+  ~
+  ~ This program is free software; you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation; either version 2 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License along
+  ~ with this program; if not, write to the Free Software Foundation, Inc.,
+  ~ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+  -->
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" minHeight="200.0" minWidth="200.0" prefHeight="619.0" prefWidth="788.0"
+      xmlns="http://javafx.com/javafx/8.0.40" fx:controller="com.chatjawa.MainInterfaceController">
+    <children>
+        <MenuBar VBox.vgrow="NEVER">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem id="menuNew" disable="true" mnemonicParsing="false" text="New Profile"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleSaveProfileMenu" text="Save"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleSaveAllProfilesMenu" text="Save All"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <Menu disable="true" mnemonicParsing="false" text="Import">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Characters"/>
+                                <MenuItem mnemonicParsing="false" text="Color Preset"/>
+                            </items>
+                        </Menu>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem disable="true" mnemonicParsing="false" text="Preferences…"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <MenuItem mnemonicParsing="false" onAction="#handleExitMenu" text="Exit"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <Menu fx:id="colorPresetsMenu" disable="true" mnemonicParsing="false" text="Use Color Preset">
+                            <items>
+                                <SeparatorMenuItem mnemonicParsing="false"/>
+                                <MenuItem mnemonicParsing="false" onAction="#handleCreateColorPreset"
+                                          text="Create From Current"/>
+                            </items>
+                        </Menu>
+                        <Menu fx:id="profilePresetsMenu" mnemonicParsing="false" text="Set Parent Profile">
+                            <items>
+                                <SeparatorMenuItem mnemonicParsing="false"/>
+                                <MenuItem mnemonicParsing="false" onAction="#handleNoParentMenuItem" text="None"/>
+                            </items>
+                        </Menu>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="View">
+                    <items>
+                        <CheckMenuItem disable="true" mnemonicParsing="false" text="Lock Preview"/>
+                        <SeparatorMenuItem mnemonicParsing="false"/>
+                        <CheckMenuItem disable="true" mnemonicParsing="false" selected="true" text="Show Chat"/>
+                        <CheckMenuItem disable="true" mnemonicParsing="false" selected="true" text="Use Colors"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem disable="true" mnemonicParsing="false" text="Chat Jawa Help F1"/>
+                        <MenuItem disable="true" mnemonicParsing="false" text="About Chat Jawa"/>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <SplitPane dividerPositions="0.4872773536895674" VBox.vgrow="ALWAYS">
+            <items>
+                <VBox>
+                    <children>
+                        <TreeView fx:id="treeView" prefHeight="200.0" prefWidth="200.0"/>
+                        <TabPane fx:id="chatPane" minWidth="250.0" tabClosingPolicy="UNAVAILABLE">
+                            <VBox.margin>
+                                <Insets/>
+                            </VBox.margin>
+                        </TabPane>
+                    </children>
+                </VBox>
+                <VBox maxWidth="400.0" minWidth="245.0" prefWidth="340.0" spacing="3.0">
+                    <children>
+                        <TitledPane animated="false" text="Properties" VBox.vgrow="ALWAYS">
+                            <content>
+                                <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                    </padding>
+                                    <content>
+                                        <GridPane>
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="125.0" minWidth="10.0"
+                                                                   prefWidth="124.0"/>
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="88.0"
+                                                                   minWidth="7.0" prefWidth="58.0"/>
+                                                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="174.0"
+                                                                   minWidth="10.0" prefWidth="143.0"/>
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                            </rowConstraints>
+                                            <children>
+                                                <CheckBox fx:id="characterProfileCheckBox" disable="true"
+                                                          mnemonicParsing="false" GridPane.columnIndex="1"
+                                                          GridPane.halignment="CENTER" GridPane.rowIndex="2"/>
+                                                <Label text="Name"/>
+                                                <Label text="Character Profile" GridPane.rowIndex="2"/>
+                                                <TextField fx:id="profileTextField" editable="false"
+                                                           GridPane.columnIndex="1" GridPane.columnSpan="2"/>
+                                                <CheckBox fx:id="timeCheckBox" layoutX="167.0" layoutY="47.0"
+                                                          mnemonicParsing="false" GridPane.columnIndex="1"
+                                                          GridPane.rowIndex="3"/>
+                                                <Label text="Chat Timestamps" GridPane.rowIndex="3"/>
+                                                <Label text="Parent Profile" GridPane.rowIndex="1"/>
+                                                <TextField fx:id="parentTextField" editable="false"
+                                                           GridPane.columnIndex="1" GridPane.columnSpan="2"
+                                                           GridPane.rowIndex="1"/>
+                                            </children>
+                                        </GridPane>
+                                    </content>
+                                </ScrollPane>
+                            </content>
+                        </TitledPane>
+                        <TitledPane fx:id="globalChannels" animated="false" text="Global Channels" VBox.vgrow="ALWAYS">
+                            <content>
+                                <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
+                                    <opaqueInsets>
+                                        <Insets/>
+                                    </opaqueInsets>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                    </padding>
+                                    <content>
+                                        <GridPane>
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="125.0" minWidth="10.0"
+                                                                   prefWidth="124.0"/>
+                                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="88.0"
+                                                                   minWidth="7.0" prefWidth="58.0"/>
+                                                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="174.0"
+                                                                   minWidth="10.0" prefWidth="143.0"/>
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                            </rowConstraints>
+                                            <children>
+                                                <CheckBox fx:id="tradeCheckBox" mnemonicParsing="false"
+                                                          GridPane.columnIndex="1" GridPane.halignment="CENTER"/>
+                                                <CheckBox fx:id="pvpCheckBox" mnemonicParsing="false"
+                                                          GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                                                          GridPane.rowIndex="1"/>
+                                                <CheckBox fx:id="genChekBox" mnemonicParsing="false"
+                                                          GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                                                          GridPane.rowIndex="2"/>
+                                                <Label text="Trade"/>
+                                                <Label text="PvP" GridPane.rowIndex="1"/>
+                                                <Label text="General" GridPane.rowIndex="2"/>
+                                                <ColorPicker onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT"/>
+                                                <ColorPicker onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT" GridPane.rowIndex="1"/>
+                                                <ColorPicker onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT" GridPane.rowIndex="2"/>
+                                            </children>
+                                        </GridPane>
+                                    </content>
+                                </ScrollPane>
+                            </content>
+                        </TitledPane>
+                        <TitledPane fx:id="playerChannels" animated="false" layoutX="15.0" layoutY="114.0"
+                                    text="Player Channels">
+                            <content>
+                                <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
+                                    <opaqueInsets>
+                                        <Insets/>
+                                    </opaqueInsets>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                    </padding>
+                                    <content>
+                                        <GridPane>
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="125.0" minWidth="10.0"
+                                                                   prefWidth="124.0"/>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="88.0" minWidth="7.0"
+                                                                   prefWidth="58.0"/>
+                                                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="174.0"
+                                                                   minWidth="10.0" prefWidth="143.0"/>
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                            </rowConstraints>
+                                            <children>
+                                                <Label text="Emote"/>
+                                                <Label text="Yell" GridPane.rowIndex="1"/>
+                                                <Label text="Officer" GridPane.rowIndex="2"/>
+                                                <Label text="Guild" GridPane.rowIndex="3"/>
+                                                <Label text="Say" GridPane.rowIndex="4"/>
+                                                <Label text="Whisper" GridPane.rowIndex="5"/>
+                                                <CheckBox fx:id="emoteCheckBox" mnemonicParsing="false"
+                                                          GridPane.columnIndex="1" GridPane.halignment="CENTER"/>
+                                                <CheckBox fx:id="yellCheckBox" mnemonicParsing="false"
+                                                          GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                                                          GridPane.rowIndex="1"/>
+                                                <CheckBox fx:id="officerCheckBox" mnemonicParsing="false"
+                                                          GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                                                          GridPane.rowIndex="2"/>
+                                                <CheckBox fx:id="guildCheckBox" mnemonicParsing="false"
+                                                          GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                                                          GridPane.rowIndex="3"/>
+                                                <CheckBox fx:id="sayCheckBox" mnemonicParsing="false"
+                                                          GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                                                          GridPane.rowIndex="4"/>
+                                                <CheckBox fx:id="whisperCheckBox" mnemonicParsing="false"
+                                                          GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                                                          GridPane.rowIndex="5"/>
+                                                <ColorPicker onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT"/>
+                                                <ColorPicker onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT" GridPane.rowIndex="1"/>
+                                                <ColorPicker onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT" GridPane.rowIndex="2"/>
+                                                <ColorPicker onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT" GridPane.rowIndex="3"/>
+                                                <ColorPicker onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT" GridPane.rowIndex="4"/>
+                                                <ColorPicker onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT" GridPane.rowIndex="5"/>
+                                            </children>
+                                        </GridPane>
+                                    </content>
+                                </ScrollPane>
+                            </content>
+                        </TitledPane>
+                        <TitledPane fx:id="groupChannels" animated="false" expanded="false" layoutX="15.0"
+                                    layoutY="273.0" text="Group Channels">
+                            <content>
+                                <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
+                                    <opaqueInsets>
+                                        <Insets/>
+                                    </opaqueInsets>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                    </padding>
+                                    <content>
+                                        <GridPane>
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="125.0" minWidth="10.0"
+                                                                   prefWidth="124.0"/>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="88.0" minWidth="7.0"
+                                                                   prefWidth="58.0"/>
+                                                <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="174.0"
+                                                                   minWidth="10.0" prefWidth="143.0"/>
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                            </rowConstraints>
+                                            <children>
+                                                <Label text="Ops"/>
+                                                <Label text="Ops Leader" GridPane.rowIndex="1"/>
+                                                <Label text="Group" GridPane.rowIndex="2"/>
+                                                <Label text="Ops Announcements" GridPane.rowIndex="3"/>
+                                                <Label text="Ops Officer" GridPane.rowIndex="4"/>
+                                                <CheckBox fx:id="opsCheckBox" mnemonicParsing="false"
+                                                          GridPane.columnIndex="1" GridPane.halignment="CENTER"/>
+                                                <CheckBox fx:id="opsLeaderCheckBox" mnemonicParsing="false"
+                                                          GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                                                          GridPane.rowIndex="1"/>
+                                                <CheckBox fx:id="groupCheckBox" mnemonicParsing="false"
+                                                          GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                                                          GridPane.rowIndex="2"/>
+                                                <CheckBox fx:id="opsAnnounceCheckBox" layoutX="62.0" layoutY="77.0"
+                                                          mnemonicParsing="false" GridPane.columnIndex="1"
+                                                          GridPane.halignment="CENTER" GridPane.rowIndex="3"/>
+                                                <CheckBox fx:id="opsOfficerCheckBox" layoutX="62.0" layoutY="107.0"
+                                                          mnemonicParsing="false" GridPane.columnIndex="1"
+                                                          GridPane.halignment="CENTER" GridPane.rowIndex="4"/>
+                                                <ColorPicker onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT"/>
+                                                <ColorPicker onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT" GridPane.rowIndex="1"/>
+                                                <ColorPicker onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT" GridPane.rowIndex="2"/>
+                                                <ColorPicker layoutX="88.0" layoutY="73.0" onAction="#handleColorSelect"
+                                                             GridPane.columnIndex="2" GridPane.halignment="RIGHT"
+                                                             GridPane.rowIndex="3"/>
+                                                <ColorPicker layoutX="88.0" layoutY="43.0" onAction="#handleColorSelect"
+                                                             GridPane.columnIndex="2" GridPane.halignment="RIGHT"
+                                                             GridPane.rowIndex="4"/>
+                                            </children>
+                                        </GridPane>
+                                    </content>
+                                </ScrollPane>
+                            </content>
+                        </TitledPane>
+                        <TitledPane fx:id="systemChannels" animated="false" expanded="false" layoutX="15.0"
+                                    layoutY="200.0" text="System Channels">
+                            <content>
+                                <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
+                                    <opaqueInsets>
+                                        <Insets/>
+                                    </opaqueInsets>
+                                    <padding>
+                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                                    </padding>
+                                    <content>
+                                        <GridPane>
+                                            <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="125.0" minWidth="10.0"
+                                                                   prefWidth="124.0"/>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="88.0" minWidth="7.0"
+                                                                   prefWidth="58.0"/>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="174.0" minWidth="10.0"
+                                                                   prefWidth="143.0"/>
+                                            </columnConstraints>
+                                            <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                            </rowConstraints>
+                                            <children>
+                                                <Label text="Combat Info"/>
+                                                <Label text="Conversations" GridPane.rowIndex="1"/>
+                                                <Label text="Character Login" GridPane.rowIndex="2"/>
+                                                <Label text="Ops Info" GridPane.rowIndex="3"/>
+                                                <Label text="System Feedback" GridPane.rowIndex="4"/>
+                                                <Label layoutX="10.0" layoutY="137.0" text="Guild Info"
+                                                       GridPane.rowIndex="5"/>
+                                                <Label layoutX="10.0" layoutY="167.0" text="Group Info"
+                                                       GridPane.rowIndex="6"/>
+                                                <CheckBox fx:id="combatInfoCheckBox" mnemonicParsing="false"
+                                                          GridPane.columnIndex="1" GridPane.halignment="CENTER"/>
+                                                <CheckBox fx:id="conversationCheckBox" mnemonicParsing="false"
+                                                          GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                                                          GridPane.rowIndex="1"/>
+                                                <CheckBox fx:id="charLoginCheckBox" mnemonicParsing="false"
+                                                          GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                                                          GridPane.rowIndex="2"/>
+                                                <CheckBox fx:id="opsInfoCheckBox" layoutX="62.0" layoutY="77.0"
+                                                          mnemonicParsing="false" GridPane.columnIndex="1"
+                                                          GridPane.halignment="CENTER" GridPane.rowIndex="3"/>
+                                                <CheckBox fx:id="sysFeedCheckBox" layoutX="62.0" layoutY="107.0"
+                                                          mnemonicParsing="false" GridPane.columnIndex="1"
+                                                          GridPane.halignment="CENTER" GridPane.rowIndex="4"/>
+                                                <CheckBox fx:id="guildInfoCheckBox" layoutX="64.0" layoutY="137.0"
+                                                          mnemonicParsing="false" GridPane.columnIndex="1"
+                                                          GridPane.halignment="CENTER" GridPane.rowIndex="5"/>
+                                                <CheckBox fx:id="groupInfoCheckBox" layoutX="64.0" layoutY="167.0"
+                                                          mnemonicParsing="false" GridPane.columnIndex="1"
+                                                          GridPane.halignment="CENTER" GridPane.rowIndex="6"/>
+                                                <ColorPicker onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT"/>
+                                                <ColorPicker onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT" GridPane.rowIndex="1"/>
+                                                <ColorPicker onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT" GridPane.rowIndex="2"/>
+                                                <ColorPicker layoutX="88.0" layoutY="73.0" onAction="#handleColorSelect"
+                                                             GridPane.columnIndex="2" GridPane.halignment="RIGHT"
+                                                             GridPane.rowIndex="3"/>
+                                                <ColorPicker layoutX="88.0" layoutY="43.0" onAction="#handleColorSelect"
+                                                             GridPane.columnIndex="2" GridPane.halignment="RIGHT"
+                                                             GridPane.rowIndex="4"/>
+                                                <ColorPicker layoutX="94.0" layoutY="133.0"
+                                                             onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT" GridPane.rowIndex="5"/>
+                                                <ColorPicker layoutX="85.0" layoutY="163.0"
+                                                             onAction="#handleColorSelect" GridPane.columnIndex="2"
+                                                             GridPane.halignment="RIGHT" GridPane.rowIndex="6"/>
+                                            </children>
+                                        </GridPane>
+                                    </content>
+                                </ScrollPane>
+                            </content>
+                        </TitledPane>
+                    </children>
+                    <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                    </padding>
+                </VBox>
+            </items>
+        </SplitPane>
+    </children>
+</VBox>
