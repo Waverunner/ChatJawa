@@ -36,7 +36,7 @@ public class Profile {
     private boolean timestamps;
     private boolean character;
 
-    private boolean dirty = true;
+    private boolean dirty = false;
 
     public Profile(String name, List<ChatTab> tabs, boolean timestamps) {
         this.name = name;

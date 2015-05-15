@@ -42,7 +42,7 @@ public class SwtorChatFactory {
     public static List<Profile> getGameProfiles() {
         ArrayList<Profile> profiles = new ArrayList<>();
 
-        File dir = new File(System.getProperty("GameGUIStates"));
+        File dir = new File(System.getProperty("GameSettings"));
         if (!dir.exists())
             return null;
 
@@ -124,7 +124,6 @@ public class SwtorChatFactory {
             String[] settings = s.split("\\.");
 
             ChatTab tab = new ChatTab(settings[1]);
-            // TODO: Read the channel data
             tab.getChannels().addAll(Channel.getEnumeration(Long.valueOf(settings[2])));
             channels.add(tab);
         }

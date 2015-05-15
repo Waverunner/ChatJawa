@@ -58,11 +58,7 @@ public class ChatJawa extends Application {
 
     public static void main(String[] args) {
         cleanup();
-        try {
-            launch(args);
-        } catch (Exception e) {
-            JawaUtils.DisplayException(e, "Unhandled Exception Caught\n" + e.getLocalizedMessage());
-        }
+        launch(args);
     }
 
     public static ChatJawa getInstance() {
@@ -94,16 +90,13 @@ public class ChatJawa extends Application {
         Scene scene = new Scene(root);
 
         stage.setTitle("Chat Jawa");
-        // TODO: Tweak min w/h settings -- don't go over 800x600
-        stage.setMinWidth(400);
-        stage.setMinHeight(400);
         stage.setScene(scene);
 
         stage.setOnCloseRequest(event -> {
-                    if (mainController.performSaveCheck()) ;
-                    Platform.exit();
-                }
-        );
+            if (mainController.performSaveCheck()) {
+                Platform.exit();
+            }
+        });
 
         load();
 
@@ -173,8 +166,9 @@ public class ChatJawa extends Application {
         importDialog.showAndWait().ifPresent(response -> {
             if (response == ImportDialog.IMPORT_BUTTON) {
                 mainController.addProfiles(importDialog.getSelectedProfiles());
-            } else
+            } else {
                 mainController.addProfiles(Arrays.asList(getDefaultProfile()));
+            }
         });
     }
 
@@ -202,7 +196,7 @@ public class ChatJawa extends Application {
         Properties properties = new Properties();
         properties.setProperty("Version", "1");
         properties.setProperty("AutoUpdate", "true");
-        properties.setProperty("GameGUIStates", System.getProperty("user.home") + "\\AppData\\Local\\SWTOR\\swtor\\settings");
+        properties.setProperty("GameSettings", System.getProperty("user.home") + "\\AppData\\Local\\SWTOR\\swtor\\settings");
         properties.setProperty("Profiles", new File("profiles").getAbsolutePath());
         return properties;
     }

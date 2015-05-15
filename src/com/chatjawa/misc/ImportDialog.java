@@ -128,6 +128,8 @@ public class ImportDialog extends Alert {
         ArrayList<Profile> selected = new ArrayList<>();
 
         profiles.stream().filter(profileCell -> profileCell.isSelected()).forEach(selection -> {
+            // Set the profile as dirty since the character does not have a .profile file yet
+            selection.getData().setDirty(true);
             selected.add(selection.getData());
         });
 

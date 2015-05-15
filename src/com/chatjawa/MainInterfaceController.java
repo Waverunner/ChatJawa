@@ -132,7 +132,8 @@ public class MainInterfaceController implements Initializable {
 
     private Profile currentProfile;
 
-    private boolean changingTab = false;
+    private boolean isChangingActiveTab = false;
+    private boolean isChangingActiveProfile = false;
 
     private void populateFromProfile(Profile profile) {
         profileTextField.setText(profile.getName());
@@ -162,6 +163,9 @@ public class MainInterfaceController implements Initializable {
     }
 
     private void setProfileParent(Profile child, Profile parent) {
+        if (child.getParent().equals(parent.getName()))
+            return;
+
         if (parent == null && !child.getParent().isEmpty()) {
             child.setParent(null);
             profilePresetsMenu.getItems().add(createMenuItemForProfile(child));
@@ -178,6 +182,8 @@ public class MainInterfaceController implements Initializable {
                 profilePresetsMenu.getItems().remove(menuItem);
             }
         }
+
+        child.setDirty(true);
     }
 
     private void populateTabs(List<ChatTab> tabs, ColorProfile colors) {
@@ -314,11 +320,13 @@ public class MainInterfaceController implements Initializable {
         if (profile == currentProfile)
             return;
 
+        isChangingActiveProfile = true;
         populateFromProfile(profile);
 
         ChatJawa.getInstance().setTitle(profile.getName());
 
         currentProfile = profile;
+        isChangingActiveProfile = false;
     }
 
     private void handleChangeProfileName(String newName) {
@@ -342,7 +350,7 @@ public class MainInterfaceController implements Initializable {
         for (Profile profile : unsavedProfiles) {
             prompt += profile.getName() + "\n";
         }
-        prompt += "\nWould you like to save the profiles before exiting?\n\n\n";
+        prompt += "\nWould you like to save the profiles before exiting?\n\n";
 
         AtomicBoolean atomicBoolean = new AtomicBoolean(true);
         JawaUtils.DisplayConfirmation("Unsaved Changes", prompt).ifPresent(response -> {
@@ -436,9 +444,9 @@ public class MainInterfaceController implements Initializable {
                 if (newValue == null || newValue == oldValue)
                     return;
 
-                changingTab = true;
+                isChangingActiveTab = true;
                 handleViewChatTab((ChatTab) ((Tab) newValue).getUserData());
-                changingTab = false;
+                isChangingActiveTab = false;
             }
         });
 
@@ -446,6 +454,13 @@ public class MainInterfaceController implements Initializable {
     }
 
     private void _addCheckBoxListeners() {
+        // Profile Properties
+        timeCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if (currentProfile == null || isChangingActiveProfile)
+                return;
+
+            currentProfile.setDirty(true);
+        });
         // General
         tradeCheckBox.selectedProperty().addListener(new ChannelBoxListener(Channel.TRADE));
         pvpCheckBox.selectedProperty().addListener(new ChannelBoxListener(Channel.PVP));
@@ -529,6 +544,6 @@ public class MainInterfaceController implements Initializable {
     }
 
     public boolean isChangingTabs() {
-        return changingTab;
+        return isChangingActiveTab;
     }
 }

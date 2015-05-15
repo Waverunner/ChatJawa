@@ -54,6 +54,7 @@ public class ChannelBoxListener implements ChangeListener {
             currentTab.addChannel(channel);
         else
             currentTab.getChannels().remove(channel);
-    }
 
+        controller.getCurrentProfile().setDirty(true);
+    }
 }

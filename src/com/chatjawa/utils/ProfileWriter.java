@@ -77,6 +77,7 @@ public class ProfileWriter {
         } catch (Exception e) {
             JawaUtils.DisplayException(e, e.getLocalizedMessage());
         }
+        profile.setDirty(false);
     }
 
     public void write(List<Profile> profileList) {
