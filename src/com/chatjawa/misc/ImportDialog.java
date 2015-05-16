@@ -51,6 +51,7 @@ public class ImportDialog extends Alert {
     public static ButtonType IMPORT_BUTTON = new ButtonType("Import", ButtonData.OK_DONE);
     private ObservableList<ProfileCellBox> profiles;
 
+    // TODO Refactor for only grabbing names of the profiles and create Profile objects when chosen (speed improvement)
     public ImportDialog(List<Profile> characters) {
         super(AlertType.CONFIRMATION);
 

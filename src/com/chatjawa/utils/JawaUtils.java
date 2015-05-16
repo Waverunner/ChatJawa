@@ -69,11 +69,13 @@ public class JawaUtils {
         alert.showAndWait();
     }
 
-    public static void DisplayException(Exception ex, String message) {
+    public static void DisplayException(Throwable throwable, String message) {
+        // TODO Add copy buttons to exception message
+
         // Create the dialog
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Chat Jawa");
-        alert.setHeaderText("An exception has occured");
+        alert.setHeaderText("Chat Jawa has encountered an error.");
         alert.setContentText(message);
 
         // Create custom content
@@ -96,7 +98,7 @@ public class JawaUtils {
         // Set exception text
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
-        ex.printStackTrace(pw);
+        throwable.printStackTrace(pw);
         trace.setText(sw.toString());
 
         // Add to the dialog

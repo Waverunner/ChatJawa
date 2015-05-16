@@ -27,8 +27,10 @@ import com.chatjawa.data.ColorProfile;
 import com.chatjawa.data.Profile;
 import com.chatjawa.misc.ChannelBoxListener;
 import com.chatjawa.misc.ChatLabel;
+import com.chatjawa.misc.ImportDialog;
 import com.chatjawa.utils.JawaUtils;
 import com.chatjawa.utils.ProfileWriter;
+import com.chatjawa.utils.SwtorChatFactory;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -135,10 +137,16 @@ public class MainInterfaceController implements Initializable {
     private boolean isChangingActiveProfile = false;
 
     private void populateFromProfile(Profile profile) {
+        boolean isCharacter = profile.isCharacter();
+
         profileTextField.setText(profile.getName());
         parentTextField.setText(profile.getParent());
+
         timeCheckBox.setSelected(profile.isTimestampsEnabled());
-        characterProfileCheckBox.setSelected(profile.isCharacter());
+        characterProfileCheckBox.setSelected(isCharacter);
+
+        profileTextField.setDisable(isCharacter);
+        parentTextField.setDisable(isCharacter);
 
         populateTabs(profile.getTabs(), profile.getColors());
 
@@ -162,14 +170,16 @@ public class MainInterfaceController implements Initializable {
     }
 
     private void setProfileParent(Profile child, Profile parent) {
-        if (child.getParent().equals(parent.getName()))
-            return;
-
         if (parent == null && !child.getParent().isEmpty()) {
             child.setParent(null);
-            profilePresetsMenu.getItems().add(createMenuItemForProfile(child));
+            profilePresetsMenu.getItems().add(0, createMenuItemForProfile(child));
+            // Re-update the Interface
+            populateFromProfile(child);
             return;
         }
+
+        if (parent != null && child.getParent().equals(parent.getName()))
+            return;
 
         child.copyFrom(parent, true);
         populateFromProfile(child);
@@ -405,6 +415,30 @@ public class MainInterfaceController implements Initializable {
             ChatJawa.getInstance().close();
     }
 
+    @FXML
+    private void handleImportCharactersMenu(ActionEvent event) {
+        List<Profile> gameProfiles = SwtorChatFactory.getGameProfiles();
+
+        List<String> imported = new ArrayList<>();
+        getProfiles().forEach(profile -> imported.add(profile.getName()));
+
+        List<Profile> toImport = new ArrayList<>();
+        for (Profile gameProfile : gameProfiles) {
+            if (!imported.contains(gameProfile.getName()))
+                toImport.add(gameProfile);
+        }
+
+        if (toImport.size() == 0) {
+            JawaUtils.DisplayInfo("Import Characters", "You have already imported all your characters.");
+            return;
+        }
+
+        ImportDialog dialog = new ImportDialog(toImport);
+        dialog.showAndWait().ifPresent(response -> {
+            if (response == ImportDialog.IMPORT_BUTTON)
+                addProfiles(dialog.getSelectedProfiles());
+        });
+    }
     // </editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="Initializers">

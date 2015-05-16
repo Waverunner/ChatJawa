@@ -25,6 +25,7 @@ import com.chatjawa.data.Channel;
 import com.chatjawa.data.ChatTab;
 import com.chatjawa.data.Profile;
 import com.chatjawa.misc.ImportDialog;
+import com.chatjawa.misc.JawaExceptionHandler;
 import com.chatjawa.utils.JawaUtils;
 import com.chatjawa.utils.ProfileReader;
 import com.chatjawa.utils.SwtorChatFactory;
@@ -59,6 +60,7 @@ public class ChatJawa extends Application {
 
     public static void main(String[] args) {
         //cleanup();
+        Thread.setDefaultUncaughtExceptionHandler(new JawaExceptionHandler());
         launch(args);
     }
 
@@ -124,9 +126,11 @@ public class ChatJawa extends Application {
         if (profiles.exists()) {
             ProfileReader reader = new ProfileReader();
             profileList = reader.read(profiles.listFiles());
+        } else {
+            profiles.mkdir();
         }
 
-        if (profileList == null || profileList.size() < 0) {
+        if (profileList == null || profileList.size() == 0) {
             profileList = new ArrayList<>(Collections.singletonList(getDefaultProfile()));
         }
 

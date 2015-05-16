@@ -73,7 +73,7 @@ public class ProfileWriter {
         try {
             File file = new File(profilesDir + profile.getName() + ".profile");
 
-            XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream(file, false));
+            XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream(file, false), "UTF-8");
             eventWriter.add(eventFactory.createStartDocument("UTF-8"));
             eventWriter.add(lineEvent);
 

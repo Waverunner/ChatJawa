@@ -37,7 +37,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Created by Waverunner on 5/15/2015.
+ * Created by Waverunner on 5/15/2015
  */
 public class ProfileReader {
 
@@ -90,7 +90,7 @@ public class ProfileReader {
         Profile profile = null;
         try {
             profile = new Profile(file.getName());
-            XMLEventReader eventReader = inputFactory.createXMLEventReader(new FileInputStream(file));
+            XMLEventReader eventReader = inputFactory.createXMLEventReader(new FileInputStream(file), "UTF-8");
 
             ChatTab chatTab = null;
             while (eventReader.hasNext()) {
@@ -109,10 +109,8 @@ public class ProfileReader {
                                 profile.getTabs().add(chatTab);
                             break;
                         case ProfileWriter.CHANNEL:
-                            if (chatTab != null) {
+                            if (chatTab != null)
                                 chatTab.addChannel(Channel.getValue(Long.valueOf(eventReader.nextEvent().asCharacters().getData())));
-                            } else
-                                JawaUtils.DisplayWarning("Read Issue", "Tried to set channel for a null channel");
                             break;
                         default:
                             JawaUtils.Output("Unsure how to handle: " + element.getName().getLocalPart());
@@ -121,6 +119,7 @@ public class ProfileReader {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             JawaUtils.DisplayException(e, "Exception while reading Chat Profile - " + e.getLocalizedMessage());
         }
 

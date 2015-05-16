@@ -36,10 +36,11 @@
                         <MenuItem mnemonicParsing="false" onAction="#handleSaveProfileMenu" text="Save"/>
                         <MenuItem mnemonicParsing="false" onAction="#handleSaveAllProfilesMenu" text="Save All"/>
                         <SeparatorMenuItem mnemonicParsing="false"/>
-                        <Menu disable="true" mnemonicParsing="false" text="Import">
+                        <Menu mnemonicParsing="false" text="Import">
                             <items>
-                                <MenuItem mnemonicParsing="false" text="Characters"/>
-                                <MenuItem mnemonicParsing="false" text="Color Preset"/>
+                                <MenuItem mnemonicParsing="false" onAction="#handleImportCharactersMenu"
+                                          text="Characters"/>
+                                <MenuItem disable="true" mnemonicParsing="false" text="Color Preset"/>
                             </items>
                         </Menu>
                         <SeparatorMenuItem mnemonicParsing="false"/>
@@ -48,7 +49,7 @@
                         <MenuItem mnemonicParsing="false" onAction="#handleExitMenu" text="Exit"/>
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
+                <Menu mnemonicParsing="false" text="Profile">
                     <items>
                         <Menu fx:id="colorPresetsMenu" disable="true" mnemonicParsing="false" text="Use Color Preset">
                             <items>
