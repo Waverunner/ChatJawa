@@ -38,6 +38,11 @@ public class Profile {
 
     private boolean dirty = false;
 
+    public Profile() {
+        this.tabs = new ArrayList<>();
+        this.parent = "";
+    }
+
     public Profile(String name, List<ChatTab> tabs, boolean timestamps) {
         this.name = name;
         this.tabs = tabs;

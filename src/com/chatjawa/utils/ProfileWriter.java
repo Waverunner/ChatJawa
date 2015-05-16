@@ -45,6 +45,14 @@ import java.util.Map;
  */
 public class ProfileWriter {
 
+    public static final String NAME = "Name";
+    public static final String PROFILE = "Profile";
+    public static final String P_PARENT = "Parent";
+    public static final String P_TIMESTAMPS = "Timestamps";
+    public static final String P_CHARACTER = "CharacterProfile";
+    public static final String CHAT_TAB = "ChatTab";
+    public static final String CHANNEL = "Channel";
+
     private String profilesDir;
 
     private XMLOutputFactory outputFactory;
@@ -86,30 +94,30 @@ public class ProfileWriter {
 
     private void createProfileElements_v1(XMLEventWriter eventWriter, Profile profile) throws Exception {
         Map<String, String> attributes = new HashMap<>();
-        attributes.put("Name", profile.getName());
-        attributes.put("Parent", profile.getParent());
-        attributes.put("Timestamps", String.valueOf(profile.isTimestampsEnabled()));
-        attributes.put("CharacterProfile", String.valueOf(profile.isCharacter()));
+        attributes.put(NAME, profile.getName());
+        attributes.put(P_PARENT, profile.getParent());
+        attributes.put(P_TIMESTAMPS, String.valueOf(profile.isTimestampsEnabled()));
+        attributes.put(P_CHARACTER, String.valueOf(profile.isCharacter()));
 
-        createElement(eventWriter, "Profile", attributes);
+        createElement(eventWriter, PROFILE, attributes);
         for (ChatTab tab : profile.getTabs()) {
             Map<String, String> tabAttributes = new HashMap<>();
-            tabAttributes.put("Name", tab.getName());
+            tabAttributes.put(NAME, tab.getName());
 
             createIndent(eventWriter, 1);
-            createElement(eventWriter, "ChatTab", tabAttributes);
+            createElement(eventWriter, CHAT_TAB, tabAttributes);
 
             createChannelElements_v1(eventWriter, tab.getChannels());
 
             createIndent(eventWriter, 1);
-            endElement(eventWriter, "ChatTab");
+            endElement(eventWriter, CHAT_TAB);
         }
-        endElement(eventWriter, "Profile");
+        endElement(eventWriter, PROFILE);
     }
 
     private void createChannelElements_v1(XMLEventWriter eventWriter, EnumSet<Channel> channels) throws Exception {
         for (Channel channel : channels) {
-            createNode(eventWriter, "Channel", String.valueOf(channel.getId()), 2);
+            createNode(eventWriter, CHANNEL, String.valueOf(channel.getId()), 2);
         }
     }
 
@@ -131,10 +139,12 @@ public class ProfileWriter {
         eventWriter.add(lineEvent);
     }
 
+/*
     private void createElement(XMLEventWriter eventWriter, String name) throws Exception {
         eventWriter.add(eventFactory.createStartElement("", "", name));
         eventWriter.add(lineEvent);
     }
+*/
 
     private void createElement(XMLEventWriter eventWriter, String name, Map<String, String> attributes) throws Exception {
         eventWriter.add(eventFactory.createStartElement("", "", name));
@@ -153,10 +163,12 @@ public class ProfileWriter {
         eventWriter.add(lineEvent);
     }
 
+/*
     private void createLineTab(XMLEventWriter eventWriter) throws Exception {
         eventWriter.add(lineEvent);
         eventWriter.add(indentEvent);
     }
+*/
 
     private void createIndent(XMLEventWriter eventWriter, int level) throws Exception {
         for (int i = 0; i < level; i++) {

@@ -26,6 +26,7 @@ import com.chatjawa.data.ChatTab;
 import com.chatjawa.data.Profile;
 import com.chatjawa.misc.ImportDialog;
 import com.chatjawa.utils.JawaUtils;
+import com.chatjawa.utils.ProfileReader;
 import com.chatjawa.utils.SwtorChatFactory;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -38,6 +39,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -47,17 +49,16 @@ import java.util.Properties;
  */
 public class ChatJawa extends Application {
 
-    // TODO: Character cleanup tool for deleted toons
+    // TODO: Character cleanup tool for deleted characters
     // TODO: Color Presets
 
-    private static final int VERSION = 0;
     private static ChatJawa instance;
 
     private MainInterfaceController mainController;
     private Stage stage;
 
     public static void main(String[] args) {
-        cleanup();
+        //cleanup();
         launch(args);
     }
 
@@ -104,16 +105,33 @@ public class ChatJawa extends Application {
     }
 
     private void load() {
+        // TODO Check the version from properties and auto-update if necessary/enabled
+
         // Try and read the properties. If no settings file is found, then perform first-time setup.
         Properties properties = readProperties();
-        if (properties == null)
+        if (properties == null) {
             firstLoad();
+            return;
+        }
 
-        // TODO Check the version from properties and auto-update if necessary/enabled
+        // Properties file found, add in the saved ChatJawa profiles
+
+        List<Profile> profileList = new ArrayList<>();
+
+        File profiles = new File("profiles");
+        if (profiles.exists()) {
+            ProfileReader reader = new ProfileReader();
+            profileList = reader.read(profiles.listFiles());
+        }
+
+        if (profileList == null || profileList.size() < 0) {
+            profileList = new ArrayList<>(Arrays.asList(getDefaultProfile()));
+        }
+
+        mainController.addProfiles(profileList);
     }
 
     private Properties readProperties() {
-        // TODO Each Profile has it's own XML settings file
 
         // Read the main settings files
         Properties properties;

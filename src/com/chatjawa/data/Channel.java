@@ -72,7 +72,19 @@ public enum Channel {
         return flags;
     }
 
-    public static long getTabId(EnumSet<Channel> channels) {
+    public static Channel getValue(long id) {
+
+        Channel[] channels = Channel.values();
+
+        for (int i = 0; i < channels.length; i++) {
+            if (channels[i].getId() == id)
+                return channels[i];
+        }
+
+        return null;
+    }
+
+    public static long getId(EnumSet<Channel> channels) {
         long value = 0;
 
         for (Channel channel : channels) {
