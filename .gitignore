@@ -1,5 +1,6 @@
 # ChatJawa Files
-build/
+working/
+build.xml
 
 # Java Ignore Files
 *.class

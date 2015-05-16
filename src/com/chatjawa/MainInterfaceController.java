@@ -391,6 +391,8 @@ public class MainInterfaceController implements Initializable {
         JawaUtils.Output("TODO: Create a color preset from current profile");
     }
 
+    // TODO Add "Export to Game on Save" option
+
     @FXML
     private void handleSaveProfileMenu(ActionEvent event) {
         if (currentProfile == null)
@@ -398,12 +400,18 @@ public class MainInterfaceController implements Initializable {
 
         ProfileWriter parser = new ProfileWriter();
         parser.write(currentProfile);
+
+        SwtorChatFactory.save(currentProfile);
     }
 
     @FXML
     private void handleSaveAllProfilesMenu(ActionEvent event) {
         ProfileWriter parser = new ProfileWriter();
-        parser.write(getProfiles());
+
+        List<Profile> profiles = getProfiles();
+        parser.write(profiles);
+
+        SwtorChatFactory.save(profiles);
     }
 
     @FXML
