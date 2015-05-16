@@ -21,10 +21,7 @@
 
 package com.chatjawa.utils;
 
-import com.chatjawa.data.Channel;
-import com.chatjawa.data.ChatTab;
-import com.chatjawa.data.ColorProfile;
-import com.chatjawa.data.Profile;
+import com.chatjawa.data.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -32,8 +29,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by Waverunner on 5/13/2015
@@ -67,10 +62,11 @@ public class SwtorChatFactory {
         try {
             // 0-7 = he1098_, length-19 = _PlayerGUIState.ini
             String name = file.getName().substring(7, file.getName().length() - 19);
+            String server = file.getName().substring(2, file.getName().length() - (20 + name.length()));
+            JawaUtils.Output("Server: " + server);
             reader = new BufferedReader(new FileReader(file));
 
             if (!reader.readLine().equalsIgnoreCase("[Settings]")) {
-                Logger.getLogger(SwtorChatFactory.class.getName()).log(Level.WARNING, "{0} is not a valid settings file!", file.getAbsolutePath());
                 JawaUtils.DisplayInfo("Import Warning", "Attempted to load a file that was not a valid settings file: \n" + file.getAbsolutePath());
                 return null;
             }
@@ -92,7 +88,7 @@ public class SwtorChatFactory {
                 }*/
             }
 
-            return createProfile(name, tabs, null, timestamps);
+            return createProfile(name, Server.get(Integer.valueOf(server)), tabs, null, timestamps);
         } catch (IOException ex) {
             JawaUtils.DisplayException(ex, ex.getLocalizedMessage());
         } finally {
@@ -105,12 +101,12 @@ public class SwtorChatFactory {
         return null;
     }
 
-    private static Profile createProfile(String name, List<ChatTab> tabs, ColorProfile colors, boolean timestamps) {
-        Profile profile = new Profile(name);
+    private static Profile createProfile(String name, Server server, List<ChatTab> tabs, ColorProfile colors, boolean timestamps) {
+        CharacterProfile profile = new CharacterProfile(name, server);
         profile.setTabs(tabs);
         profile.setColors(colors);
         profile.setTimestamps(timestamps);
-        profile.setCharacter(true);
+        profile.setServer(server);
         return profile;
     }
 

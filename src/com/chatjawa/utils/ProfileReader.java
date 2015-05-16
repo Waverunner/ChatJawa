@@ -21,9 +21,7 @@
 
 package com.chatjawa.utils;
 
-import com.chatjawa.data.Channel;
-import com.chatjawa.data.ChatTab;
-import com.chatjawa.data.Profile;
+import com.chatjawa.data.*;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -47,7 +45,7 @@ public class ProfileReader {
         this.inputFactory = XMLInputFactory.newFactory();
     }
 
-    private void setProfileAttributes_v1(StartElement element, Profile profile) {
+    private void parseProfileAttributes_v1(StartElement element, Profile profile) {
         Iterator<Attribute> iterator = element.getAttributes();
         while (iterator.hasNext()) {
             Attribute attribute = iterator.next();
@@ -55,14 +53,16 @@ public class ProfileReader {
                 case ProfileWriter.NAME:
                     profile.setName(attribute.getValue());
                     break;
-                case ProfileWriter.P_CHARACTER:
-                    profile.setCharacter(Boolean.valueOf(attribute.getValue()));
-                    break;
                 case ProfileWriter.P_TIMESTAMPS:
                     profile.setTimestamps(Boolean.valueOf(attribute.getValue()));
                     break;
                 case ProfileWriter.P_PARENT:
                     profile.setParent(attribute.getValue());
+                    break;
+                case ProfileWriter.P_SERVER:
+                    if (profile instanceof CharacterProfile) {
+                        ((CharacterProfile) profile).setServer(Server.get(attribute.getValue()));
+                    }
                     break;
                 default:
                     break;
@@ -70,7 +70,7 @@ public class ProfileReader {
         }
     }
 
-    private ChatTab setChatTabData_v1(StartElement element, Profile profile) throws Exception {
+    private ChatTab parseChatTabData_v1(StartElement element, Profile profile) throws Exception {
         ChatTab chatTab = null;
         Iterator<Attribute> iterator = element.getAttributes();
         while (iterator.hasNext()) {
@@ -89,7 +89,7 @@ public class ProfileReader {
     public Profile read(File file) {
         Profile profile = null;
         try {
-            profile = new Profile(file.getName());
+            profile = new Profile();
             XMLEventReader eventReader = inputFactory.createXMLEventReader(new FileInputStream(file), "UTF-8");
 
             ChatTab chatTab = null;
@@ -100,11 +100,15 @@ public class ProfileReader {
                     StartElement element = event.asStartElement();
 
                     switch (element.getName().getLocalPart()) {
+                        case ProfileWriter.CHARACTER_PROFILE:
+                            profile = new CharacterProfile();
+                            parseProfileAttributes_v1(element, profile);
+                            break;
                         case ProfileWriter.PROFILE:
-                            setProfileAttributes_v1(element, profile);
+                            parseProfileAttributes_v1(element, profile);
                             break;
                         case ProfileWriter.CHAT_TAB:
-                            chatTab = setChatTabData_v1(element, profile);
+                            chatTab = parseChatTabData_v1(element, profile);
                             if (chatTab != null)
                                 profile.getTabs().add(chatTab);
                             break;

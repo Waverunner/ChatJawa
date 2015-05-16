@@ -22,6 +22,7 @@
 package com.chatjawa.utils;
 
 import com.chatjawa.data.Channel;
+import com.chatjawa.data.CharacterProfile;
 import com.chatjawa.data.ChatTab;
 import com.chatjawa.data.Profile;
 
@@ -49,9 +50,10 @@ public class ProfileWriter {
     public static final String PROFILE = "Profile";
     public static final String P_PARENT = "Parent";
     public static final String P_TIMESTAMPS = "Timestamps";
-    public static final String P_CHARACTER = "CharacterProfile";
+    public static final String P_SERVER = "Server";
     public static final String CHAT_TAB = "ChatTab";
     public static final String CHANNEL = "Channel";
+    public static final String CHARACTER_PROFILE = "CharacterProfile";
 
     private String profilesDir;
 
@@ -92,13 +94,18 @@ public class ProfileWriter {
     }
 
     private void createProfileElements_v1(XMLEventWriter eventWriter, Profile profile) throws Exception {
+        String type = (profile instanceof CharacterProfile ? CHARACTER_PROFILE : PROFILE);
+
         Map<String, String> attributes = new HashMap<>();
         attributes.put(NAME, profile.getName());
         attributes.put(P_PARENT, profile.getParent());
         attributes.put(P_TIMESTAMPS, String.valueOf(profile.isTimestampsEnabled()));
-        attributes.put(P_CHARACTER, String.valueOf(profile.isCharacter()));
+        if (type.equals(CHARACTER_PROFILE)) {
+            attributes.put(P_SERVER, ((CharacterProfile) profile).getServer().toString());
+        }
 
-        createElement(eventWriter, PROFILE, attributes);
+        createElement(eventWriter, type, attributes);
+
         for (ChatTab tab : profile.getTabs()) {
             Map<String, String> tabAttributes = new HashMap<>();
             tabAttributes.put(NAME, tab.getName());
@@ -111,7 +118,8 @@ public class ProfileWriter {
             createIndent(eventWriter, 1);
             endElement(eventWriter, CHAT_TAB);
         }
-        endElement(eventWriter, PROFILE);
+
+        endElement(eventWriter, type);
     }
 
     private void createChannelElements_v1(XMLEventWriter eventWriter, EnumSet<Channel> channels) throws Exception {

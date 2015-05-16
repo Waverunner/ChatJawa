@@ -21,10 +21,7 @@
 
 package com.chatjawa;
 
-import com.chatjawa.data.Channel;
-import com.chatjawa.data.ChatTab;
-import com.chatjawa.data.ColorProfile;
-import com.chatjawa.data.Profile;
+import com.chatjawa.data.*;
 import com.chatjawa.misc.ChannelBoxListener;
 import com.chatjawa.misc.ChatLabel;
 import com.chatjawa.misc.ImportDialog;
@@ -137,7 +134,7 @@ public class MainInterfaceController implements Initializable {
     private boolean isChangingActiveProfile = false;
 
     private void populateFromProfile(Profile profile) {
-        boolean isCharacter = profile.isCharacter();
+        boolean isCharacter = profile instanceof CharacterProfile;
 
         profileTextField.setText(profile.getName());
         parentTextField.setText(profile.getParent());

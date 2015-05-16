@@ -59,7 +59,6 @@ public class ChatJawa extends Application {
     private Stage stage;
 
     public static void main(String[] args) {
-        //cleanup();
         Thread.setDefaultUncaughtExceptionHandler(new JawaExceptionHandler());
         launch(args);
     }
@@ -67,11 +66,6 @@ public class ChatJawa extends Application {
     public static ChatJawa getInstance() {
         return instance;
     }
-
-/*    private static void cleanup() {
-        new File("profiles").delete();
-        new File("settings.xml").delete();
-    }*/
 
     @Override
     public void start(Stage stage) throws Exception {

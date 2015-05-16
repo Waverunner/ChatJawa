@@ -34,7 +34,6 @@ public class Profile {
     private List<ChatTab> tabs;
     private ColorProfile colors;
     private boolean timestamps;
-    private boolean character;
 
     private boolean dirty = false;
 
@@ -92,14 +91,6 @@ public class Profile {
 
     public void setDirty(boolean dirty) {
         this.dirty = dirty;
-    }
-
-    public boolean isCharacter() {
-        return character;
-    }
-
-    public void setCharacter(boolean character) {
-        this.character = character;
     }
 
     public String getParent() {

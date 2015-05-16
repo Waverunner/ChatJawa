@@ -1,6 +1,5 @@
 # ChatJawa Files
-profiles/
-settings.xml
+build/
 
 # Java Ignore Files
 *.class
