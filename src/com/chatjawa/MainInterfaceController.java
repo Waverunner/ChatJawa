@@ -29,7 +29,6 @@ import com.chatjawa.misc.ChannelBoxListener;
 import com.chatjawa.misc.ChatLabel;
 import com.chatjawa.utils.JawaUtils;
 import com.chatjawa.utils.ProfileWriter;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -46,7 +45,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Created by Waverunner on 5/13/2015.
+ * Created by Waverunner on 5/13/2015
  */
 public class MainInterfaceController implements Initializable {
 
@@ -177,11 +176,9 @@ public class MainInterfaceController implements Initializable {
 
         List<MenuItem> items = new ArrayList<>(profilePresetsMenu.getItems());
 
-        for (MenuItem menuItem : items) {
-            if (menuItem.getUserData() == child) {
-                profilePresetsMenu.getItems().remove(menuItem);
-            }
-        }
+        items.stream().filter(menuItem -> menuItem.getUserData() == child).forEach(menuItem -> {
+            profilePresetsMenu.getItems().remove(menuItem);
+        });
 
         child.setDirty(true);
     }
@@ -225,8 +222,7 @@ public class MainInterfaceController implements Initializable {
 
     private ChatLabel createChatLabel(Channel chan, ColorProfile colors) {
         // TODO Random generation of text for chat labels
-        ChatLabel label = new ChatLabel("[" + chan.toString() + "]: TODO Random generation of text as well as adding a ScrollView to tab content");
-        return label;
+        return new ChatLabel("[" + chan.toString() + "]: TODO Random generation of text as well as adding a ScrollView to tab content");
     }
 
     private MenuItem createMenuItemForProfile(Profile profile) {
@@ -415,7 +411,7 @@ public class MainInterfaceController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        treeView.setRoot(new TreeItem<>("Profiles"));
+        treeView.setRoot(new TreeItem<>("Characters"));
 
         _addListeners();
 
@@ -437,17 +433,13 @@ public class MainInterfaceController implements Initializable {
             handleChangeProfileName(profileTextField.getText());
         });
 
-        chatPane.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+        chatPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null || newValue == oldValue)
+                return;
 
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                if (newValue == null || newValue == oldValue)
-                    return;
-
-                isChangingActiveTab = true;
-                handleViewChatTab((ChatTab) ((Tab) newValue).getUserData());
-                isChangingActiveTab = false;
-            }
+            isChangingActiveTab = true;
+            handleViewChatTab((ChatTab) newValue.getUserData());
+            isChangingActiveTab = false;
         });
 
         _addCheckBoxListeners();
@@ -509,7 +501,7 @@ public class MainInterfaceController implements Initializable {
         treeView.getRoot().setExpanded(true);
     }
 
-    public void setSelectedProfile(int index) {
+/*    public void setSelectedProfile(int index) {
         treeView.getSelectionModel().select(index);
     }
 
@@ -521,7 +513,7 @@ public class MainInterfaceController implements Initializable {
                 }
             }
         }
-    }
+    }*/
 
     public List<Profile> getProfiles() {
         List<Profile> profiles = new ArrayList<>();

@@ -41,12 +41,9 @@ import java.util.List;
  */
 public class ProfileReader {
 
-    private String profilesDir;
-
     private XMLInputFactory inputFactory;
 
     public ProfileReader() {
-        this.profilesDir = System.getProperty("Profiles") + "\\";
         this.inputFactory = XMLInputFactory.newFactory();
     }
 

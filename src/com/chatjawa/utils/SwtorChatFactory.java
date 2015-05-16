@@ -36,7 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by Waverunner on 5/13/2015.
+ * Created by Waverunner on 5/13/2015
  */
 public class SwtorChatFactory {
     public static List<Profile> getGameProfiles() {
@@ -47,7 +47,11 @@ public class SwtorChatFactory {
             return null;
 
         // Traverse through character setting files and create profiles for each one
-        for (File file : dir.listFiles()) {
+        File[] files = dir.listFiles();
+        if (files == null)
+            return profiles;
+
+        for (File file : files) {
             if (file.getName().endsWith("_PlayerGUIState.ini")) {
                 Profile profile = readProfileFile(file);
                 if (profile != null)
@@ -71,7 +75,6 @@ public class SwtorChatFactory {
                 return null;
             }
 
-            ColorProfile colors = null;
             ArrayList<ChatTab> tabs = null;
             boolean timestamps = false;
 
@@ -84,20 +87,18 @@ public class SwtorChatFactory {
                     tabs = readChatChannels(line);
                 } else if (line.startsWith("Show_Chat_TimeStamp")) {
                     timestamps = readChatTimestamp(line);
-                } else if (line.startsWith("ChatColors")) {
-                    colors = readChatColors(line);
-                }
+                }/* else if (line.startsWith("ChatColors")) {
+                    // TODO Creating ColorProfile from Character Imports
+                }*/
             }
 
-            return createProfile(name, tabs, colors, timestamps);
+            return createProfile(name, tabs, null, timestamps);
         } catch (IOException ex) {
-            Logger.getLogger(SwtorChatFactory.class.getName()).log(Level.SEVERE, null, ex);
             JawaUtils.DisplayException(ex, ex.getLocalizedMessage());
         } finally {
             try {
                 reader.close();
-            } catch (IOException ex) {
-                Logger.getLogger(SwtorChatFactory.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
                 JawaUtils.DisplayException(ex, ex.getLocalizedMessage());
             }
         }
@@ -136,8 +137,7 @@ public class SwtorChatFactory {
         return Boolean.valueOf(line);
     }
 
-    private static ColorProfile readChatColors(String line) {
-        // TODO: Read chat colors from ini
+/*    private static ColorProfile readChatColors(String line) {
         return null;
-    }
+    }*/
 }

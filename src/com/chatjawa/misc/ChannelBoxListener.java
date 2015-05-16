@@ -29,7 +29,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
 /**
- * Created by Waverunner on 5/13/2015.
+ * Created by Waverunner on 5/13/2015
  */
 public class ChannelBoxListener implements ChangeListener {
 
@@ -50,7 +50,7 @@ public class ChannelBoxListener implements ChangeListener {
         if (currentTab == null)
             return;
 
-        if (!currentTab.getChannels().contains(channel) && (boolean) newValue == true)
+        if (!currentTab.getChannels().contains(channel) && (boolean) newValue)
             currentTab.addChannel(channel);
         else
             currentTab.getChannels().remove(channel);

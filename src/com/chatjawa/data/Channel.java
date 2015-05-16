@@ -24,7 +24,7 @@ package com.chatjawa.data;
 import java.util.EnumSet;
 
 /**
- * Created by Waverunner on 5/13/2015.
+ * Created by Waverunner on 5/13/2015
  */
 public enum Channel {
     // Global
@@ -53,7 +53,6 @@ public enum Channel {
     GUILD_INFO(68719476736L),
     GROUP_INFO(34359738368L);
 
-    public static final String NO_IDENTIFIER = "NONE";
     private final long id;
 
     Channel(long id) {
@@ -76,9 +75,9 @@ public enum Channel {
 
         Channel[] channels = Channel.values();
 
-        for (int i = 0; i < channels.length; i++) {
-            if (channels[i].getId() == id)
-                return channels[i];
+        for (Channel channel : channels) {
+            if (channel.getId() == id)
+                return channel;
         }
 
         return null;

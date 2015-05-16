@@ -49,7 +49,6 @@ import java.util.List;
 public class ImportDialog extends Alert {
 
     public static ButtonType IMPORT_BUTTON = new ButtonType("Import", ButtonData.OK_DONE);
-    private ListView<ProfileCellBox> listView;
     private ObservableList<ProfileCellBox> profiles;
 
     public ImportDialog(List<Profile> characters) {
@@ -72,7 +71,7 @@ public class ImportDialog extends Alert {
 
         // List view
         profiles = FXCollections.observableList(cells);
-        listView = new ListView<>(profiles);
+        ListView<ProfileCellBox> listView = new ListView<>(profiles);
 
         listView.setCellFactory(CheckBoxListCell.forListView(ProfileCellBox::selectedProperty, new StringConverter<ProfileCellBox>() {
 

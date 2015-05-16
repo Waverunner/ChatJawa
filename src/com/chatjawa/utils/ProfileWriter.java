@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Waverunner on 5/15/2015.
+ * Created by Waverunner on 5/15/2015
  */
 public class ProfileWriter {
 
@@ -72,9 +72,8 @@ public class ProfileWriter {
     public void write(Profile profile) {
         try {
             File file = new File(profilesDir + profile.getName() + ".profile");
-            file.createNewFile();
 
-            XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream(file));
+            XMLEventWriter eventWriter = outputFactory.createXMLEventWriter(new FileOutputStream(file, false));
             eventWriter.add(eventFactory.createStartDocument("UTF-8"));
             eventWriter.add(lineEvent);
 
@@ -89,7 +88,7 @@ public class ProfileWriter {
     }
 
     public void write(List<Profile> profileList) {
-        profileList.forEach(profile -> write(profile));
+        profileList.forEach(this::write);
     }
 
     private void createProfileElements_v1(XMLEventWriter eventWriter, Profile profile) throws Exception {

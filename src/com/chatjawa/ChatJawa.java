@@ -40,7 +40,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -66,10 +66,10 @@ public class ChatJawa extends Application {
         return instance;
     }
 
-    private static void cleanup() {
+/*    private static void cleanup() {
         new File("profiles").delete();
         new File("settings.xml").delete();
-    }
+    }*/
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -112,6 +112,8 @@ public class ChatJawa extends Application {
         if (properties == null) {
             firstLoad();
             return;
+        } else {
+            System.setProperties(properties);
         }
 
         // Properties file found, add in the saved ChatJawa profiles
@@ -125,7 +127,7 @@ public class ChatJawa extends Application {
         }
 
         if (profileList == null || profileList.size() < 0) {
-            profileList = new ArrayList<>(Arrays.asList(getDefaultProfile()));
+            profileList = new ArrayList<>(Collections.singletonList(getDefaultProfile()));
         }
 
         mainController.addProfiles(profileList);
@@ -185,7 +187,7 @@ public class ChatJawa extends Application {
             if (response == ImportDialog.IMPORT_BUTTON) {
                 mainController.addProfiles(importDialog.getSelectedProfiles());
             } else {
-                mainController.addProfiles(Arrays.asList(getDefaultProfile()));
+                mainController.addProfiles(Collections.singletonList(getDefaultProfile()));
             }
         });
     }
