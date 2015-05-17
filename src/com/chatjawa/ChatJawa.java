@@ -191,7 +191,8 @@ public class ChatJawa extends Application {
     }
 
     private Profile getDefaultProfile() {
-        Profile profile = new Profile("Default Profile");
+        Profile profile = new Profile();
+        profile.setName("Default");
         profile.setTimestamps(true);
 
         List<ChatTab> tabs = profile.getTabs();

@@ -28,7 +28,6 @@ import com.chatjawa.misc.ImportDialog;
 import com.chatjawa.utils.JawaUtils;
 import com.chatjawa.utils.ProfileWriter;
 import com.chatjawa.utils.SwtorChatFactory;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -48,16 +47,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class MainInterfaceController implements Initializable {
 
+    TreeItem<Profile> characterTreeItem = null;
+    TreeItem<Profile> profileTreeItem = null;
     // <editor-fold defaultstate="collapsed" desc="Interface Components">
     @FXML
     private TabPane chatPane;
     @FXML
-    private TreeView treeView;
+    private TreeView<Profile> treeView;
     @FXML
     private Menu colorPresetsMenu;
     @FXML
     private Menu profilePresetsMenu;
-
     // Properties group
     @FXML
     private TextField profileTextField;
@@ -67,19 +67,17 @@ public class MainInterfaceController implements Initializable {
     private CheckBox characterProfileCheckBox;
     @FXML
     private CheckBox timeCheckBox;
-
     // Panes
     @FXML
     private TitledPane globalChannels;
     @FXML
     private TitledPane playerChannels;
+
+    // Channel CheckBoxes
     @FXML
     private TitledPane groupChannels;
     @FXML
     private TitledPane systemChannels;
-
-    // Channel CheckBoxes
-
     // Global
     @FXML
     private CheckBox tradeCheckBox;
@@ -122,16 +120,16 @@ public class MainInterfaceController implements Initializable {
     private CheckBox opsInfoCheckBox;
     @FXML
     private CheckBox sysFeedCheckBox;
+    // </editor-fold>
     @FXML
     private CheckBox guildInfoCheckBox;
     @FXML
     private CheckBox groupInfoCheckBox;
-    // </editor-fold>
-
     private Profile currentProfile;
 
     private boolean isChangingActiveTab = false;
     private boolean isChangingActiveProfile = false;
+
 
     private void populateFromProfile(Profile profile) {
         boolean isCharacter = profile instanceof CharacterProfile;
@@ -320,7 +318,7 @@ public class MainInterfaceController implements Initializable {
 
     //<editor-fold defaultstate="collapsed" desc="Handlers">
     private void handleSelectProfile(Profile profile) {
-        if (profile == currentProfile)
+        if (profile == currentProfile || profile.isRoot())
             return;
 
         isChangingActiveProfile = true;
@@ -340,8 +338,6 @@ public class MainInterfaceController implements Initializable {
     }
 
     private void handleViewChatTab(ChatTab activeTab) {
-        JawaUtils.Output("Display data for tab: " + activeTab.getName());
-
         // Deselect any channel not enable for this tab.
         setChannelSelections(EnumSet.complementOf(activeTab.getChannels()), false);
         // Select rest of the channels.
@@ -408,7 +404,7 @@ public class MainInterfaceController implements Initializable {
     private void handleSaveAllProfilesMenu(ActionEvent event) {
         ProfileWriter parser = new ProfileWriter();
 
-        List<Profile> profiles = getProfiles();
+        List<Profile> profiles = getCharacterProfiles();
         parser.write(profiles);
 
         SwtorChatFactory.save(profiles);
@@ -425,7 +421,7 @@ public class MainInterfaceController implements Initializable {
         List<Profile> gameProfiles = SwtorChatFactory.getGameProfiles();
 
         List<String> imported = new ArrayList<>();
-        getProfiles().forEach(profile -> imported.add(profile.getName()));
+        getCharacterProfiles().forEach(profile -> imported.add(profile.getName()));
 
         List<Profile> toImport = new ArrayList<>();
         for (Profile gameProfile : gameProfiles) {
@@ -450,34 +446,41 @@ public class MainInterfaceController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        treeView.setRoot(new TreeItem<>("Characters"));
+        // Setup the basic tree view
+        TreeItem<Profile> root = new TreeItem<>(new Profile("root"));
+        characterTreeItem = new TreeItem<>(new Profile(Profile.CHARACTERS));
+        profileTreeItem = new TreeItem<>(new Profile(Profile.PROFILES));
 
+        root.getChildren().setAll(characterTreeItem, profileTreeItem);
+
+        treeView.setRoot(root);
+        treeView.setShowRoot(false);
+
+        // Add anything else
         _addListeners();
 
     }
 
     private void _addListeners() {
-        treeView.getSelectionModel().selectedItemProperty().addListener((ObservableValue observable, Object oldValue, Object newValue) -> {
+        treeView.getSelectionModel().selectedItemProperty().addListener((observable1, oldValue, newValue) -> {
             TreeItem item = (TreeItem) newValue;
 
-            // The root node only has a value that's a string.
-            if (item.getValue() instanceof Profile)
-                handleSelectProfile((Profile) item.getValue());
+            handleSelectProfile((Profile) item.getValue());
         });
 
-        profileTextField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+        profileTextField.focusedProperty().addListener((observable, oldValue1, newValue1) -> {
             if (profileTextField.getText().equals(currentProfile.getName()))
                 return;
 
             handleChangeProfileName(profileTextField.getText());
         });
 
-        chatPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == null || newValue == oldValue)
+        chatPane.getSelectionModel().selectedItemProperty().addListener((observable, oldValue2, newValue2) -> {
+            if (newValue2 == null || newValue2 == oldValue2)
                 return;
 
             isChangingActiveTab = true;
-            handleViewChatTab((ChatTab) newValue.getUserData());
+            handleViewChatTab((ChatTab) newValue2.getUserData());
             isChangingActiveTab = false;
         });
 
@@ -522,7 +525,7 @@ public class MainInterfaceController implements Initializable {
 
     public boolean performSaveCheck() {
         List<Profile> unsaved = new ArrayList<>();
-        getProfiles().stream().filter(Profile::isDirty).forEach(profile -> unsaved.add(profile));
+        getAllProfiles().stream().filter(Profile::isDirty).forEach(profile -> unsaved.add(profile));
 
         if (unsaved.size() > 0)
             return handleDisplaySaveDialog(unsaved);
@@ -534,35 +537,60 @@ public class MainInterfaceController implements Initializable {
         for (Profile p : profiles) {
             TreeItem<Profile> item = new TreeItem<>(p);
 
-            treeView.getRoot().getChildren().add(item);
+            if (p instanceof CharacterProfile)
+                characterTreeItem.getChildren().add(item);
+            else
+                profileTreeItem.getChildren().add(item);
+
             profilePresetsMenu.getItems().add(0, createMenuItemForProfile(p));
         }
         treeView.getRoot().setExpanded(true);
     }
 
-/*    public void setSelectedProfile(int index) {
-        treeView.getSelectionModel().select(index);
-    }
-
-    public void setSelectedProfile(Profile profile) {
-        for (Object item : treeView.getRoot().getChildren()) {
-            if (item instanceof TreeItem) {
-                if (((TreeItem) item).getValue() == profile) {
-                    treeView.getSelectionModel().select(item);
-                }
-            }
-        }
-    }*/
-
-    public List<Profile> getProfiles() {
+    public List<Profile> getCharacterProfiles() {
         List<Profile> profiles = new ArrayList<>();
-        treeView.getRoot().getChildren().forEach(item -> {
-            if (item != null && item instanceof TreeItem) {
-                Profile profile = ((TreeItem<Profile>) item).getValue();
+        characterTreeItem.getChildren().forEach(item -> {
+            if (item != null) {
+                Profile profile = item.getValue();
                 if (profile != null)
                     profiles.add(profile);
             }
         });
+
+        return profiles;
+    }
+
+    public List<Profile> getJawaProfiles() {
+        List<Profile> profiles = new ArrayList<>();
+        profileTreeItem.getChildren().forEach(item -> {
+            if (item != null) {
+                Profile profile = item.getValue();
+                if (profile != null)
+                    profiles.add(profile);
+            }
+        });
+
+        return profiles;
+    }
+
+    public List<Profile> getAllProfiles() {
+        List<Profile> profiles = new ArrayList<>();
+        profileTreeItem.getChildren().forEach(item -> {
+            if (item != null) {
+                Profile profile = item.getValue();
+                if (profile != null)
+                    profiles.add(profile);
+            }
+        });
+
+        characterTreeItem.getChildren().forEach(item -> {
+            if (item != null) {
+                Profile profile = item.getValue();
+                if (profile != null)
+                    profiles.add(profile);
+            }
+        });
+
         return profiles;
     }
 

@@ -25,9 +25,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Waverunner on 5/13/2015.
+ * Created by Waverunner on 5/13/2015
  */
 public class Profile {
+
+    public static final String CHARACTERS = "Characters";
+    public static final String PROFILES = "Profiles";
 
     private String name;
     private String parent;
@@ -49,8 +52,8 @@ public class Profile {
         this.parent = "";
     }
 
-    public Profile(String name) {
-        this(name, new ArrayList<>(), false);
+    public Profile(String rootName) {
+        this.name = rootName;
     }
 
     public String getName() {
@@ -108,6 +111,10 @@ public class Profile {
 
         if (timestamps)
             this.timestamps = timestamps;
+    }
+
+    public boolean isRoot() {
+        return (getName().equals(CHARACTERS) || getName().equals(PROFILES));
     }
 
     @Override
